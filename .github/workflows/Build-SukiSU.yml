@@ -226,31 +226,33 @@ jobs:
             echo '完成LZ4KD补丁'
           fi
 
-      - name: 🎮 Apply GameSense patches (应用 GameSense 补丁)
+      - name: 🎮 Apply GameSense patches
         run: |
           echo "正在下载并应用 GameSense v3.0 补丁..."
-          cd kernel_workspace/kernel_platform/common
-          
-          # 从私有仓库下载 GameSense 补丁文件（使用 token 认证）
-          mkdir -p /tmp/gamesense
-          curl -LSs -H "Authorization: token ${{ secrets.Patch_TOKEN }}" \
-            "https://raw.githubusercontent.com/Ray170910/gamesense-ksu-module/main/my_mem.patch" \
-            -o /tmp/gamesense/my_mem.patch
-          curl -LSs -H "Authorization: token ${{ secrets.Patch_TOKEN }}" \
-            "https://raw.githubusercontent.com/Ray170910/gamesense-ksu-module/main/my_vmalloc.patch" \
-            -o /tmp/gamesense/my_vmalloc.patch
-          
-          # 应用 mem.c 补丁
-          if [ -f "/tmp/gamesense/my_mem.patch" ]; then
-            echo "[GameSense] 应用 mem.c 补丁..."
-            patch -p1 < /tmp/gamesense/my_mem.patch || patch -p1 --fuzz=3 < /tmp/gamesense/my_mem.patch || true
-          fi
-          
-          # 应用 vmalloc.c 补丁
-          if [ -f "/tmp/gamesense/my_vmalloc.patch" ]; then
-            echo "[GameSense] 应用 vmalloc.c 补丁..."
-            patch -p1 < /tmp/gamesense/my_vmalloc.patch || patch -p1 --fuzz=3 < /tmp/gamesense/my_vmalloc.patch || true
-          fi
+          (
+            cd kernel_workspace/kernel_platform/common
+            
+            # 从私有仓库下载 GameSense 补丁文件（使用 token 认证）
+            mkdir -p /tmp/gamesense
+            curl -LSs -H "Authorization: token ${{ secrets.Patch_TOKEN }}" \
+              "https://raw.githubusercontent.com/Ray170910/gamesense-ksu-module/main/my_mem.patch" \
+              -o /tmp/gamesense/my_mem.patch
+            curl -LSs -H "Authorization: token ${{ secrets.Patch_TOKEN }}" \
+              "https://raw.githubusercontent.com/Ray170910/gamesense-ksu-module/main/my_vmalloc.patch" \
+              -o /tmp/gamesense/my_vmalloc.patch
+            
+            # 应用 mem.c 补丁
+            if [ -f "/tmp/gamesense/my_mem.patch" ]; then
+              echo "[GameSense] 应用 mem.c 补丁..."
+              patch -p1 < /tmp/gamesense/my_mem.patch || patch -p1 --fuzz=3 < /tmp/gamesense/my_mem.patch || true
+            fi
+            
+            # 应用 vmalloc.c 补丁
+            if [ -f "/tmp/gamesense/my_vmalloc.patch" ]; then
+              echo "[GameSense] 应用 vmalloc.c 补丁..."
+              patch -p1 < /tmp/gamesense/my_vmalloc.patch || patch -p1 --fuzz=3 < /tmp/gamesense/my_vmalloc.patch || true
+            fi
+          )
           
           echo "✅ GameSense 补丁应用完成"
 
