@@ -186,6 +186,8 @@ jobs:
           cd kernel_workspace/kernel_platform
           curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s tmp-builtin
           cd ./KernelSU
+          git fetch --unshallow || true
+          git checkout 0d27e685cb9f1b873cd334371c0d8b6ea4c3aea9
           KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 10606)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           export KSU_VERSION=$KSU_VERSION
